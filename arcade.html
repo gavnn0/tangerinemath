@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Arcade</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+a{text-decoration:none;}
+
+/* Fixed background for full scroll */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background:
+    linear-gradient(#0f0f1f,#000),
+    radial-gradient(circle at 20% 20%,#ff8c0022,transparent 50%),
+    radial-gradient(circle at 80% 60%,#ffb34722,transparent 50%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  color:#ffb347;
+  font-family:'Poppins',sans-serif;
+  text-align:center;
+}
+
+/* Header */
+h1{
+  font-family:'Press Start 2P',cursive;
+  margin-top:40px;
+  font-size:28px;
+  color:#ffb347;
+  text-shadow:0 0 12px #ff7e00;
+}
+
+/* Emulator box */
+.emulator-container{
+  margin:40px auto;
+  width:90%;
+  max-width:900px;
+  height:500px;
+  position:relative;
+}
+.emulator{
+  width:100%;
+  height:100%;
+  border:4px solid #ffb347;
+  box-shadow:0 0 20px #ff7e00;
+  display:block;
+}
+.fullscreen-btn{
+  position:absolute;
+  top:10px;
+  right:10px;
+  padding:6px 12px;
+  border:none;
+  border-radius:8px;
+  background:#ff7e00;
+  color:white;
+  cursor:pointer;
+  font-family:'Poppins',sans-serif;
+  font-weight:600;
+}
+
+/* Search */
+#search-roms{
+  padding:12px 18px;
+  width:320px;
+  border-radius:30px;
+  border:none;
+  font-size:14px;
+  margin:0 auto;
+  display:block;
+  box-shadow:0 6px 16px rgba(0,0,0,0.2);
+  margin-top:20px;
+  margin-bottom:30px;
+  outline:none;
+}
+
+/* Tabs */
+.tab-header{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:20px;
+}
+.tab-header button{
+  padding:10px 20px;
+  background:#222;
+  color:#ffb347;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+  font-family:'Press Start 2P';
+  transition:.25s;
+}
+.tab-header button.active{
+  background:#ff7e00;
+  color:white;
+}
+.tab-content{
+  display:none;
+}
+.tab-content.active{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+  gap:30px;
+  padding:0 40px 40px 40px;
+  max-width:900px;
+  margin:0 auto 60px auto;
+}
+
+/* Cartridge icon */
+.rom{
+  background:#222;
+  border-radius:12px;
+  height:160px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  transition:.25s;
+  cursor:pointer;
+  box-shadow:inset 0 6px #444,0 6px 0 #111;
+}
+.rom:hover{
+  transform:scale(1.1);
+  box-shadow:0 0 20px #ff7e00,inset 0 6px #444;
+}
+.rom img{
+  width:80px;
+  margin-bottom:10px;
+}
+.rom span{
+  font-size:12px;
+  font-family:'Press Start 2P';
+  color:#ffb347;
+  text-shadow:0 0 6px #ff7e00;
+}
+</style>
+</head>
+<body>
+
+<h1>🕹 Retro Arcade</h1>
+
+<div class="emulator-container">
+  <iframe id="emulator" src="https://demo.emulatorjs.org/" class="emulator"></iframe>
+  <button class="fullscreen-btn" onclick="toggleFullscreen()">Fullscreen</button>
+</div>
+
+<input type="text" id="search-roms" placeholder="Search ROMs..." onkeyup="filterRoms()">
+
+<div class="tab-header" id="tab-header">
+  <!-- Tabs inserted dynamically -->
+</div>
+
+<div id="tabs-container">
+  <!-- Tab content inserted dynamically -->
+</div>
+
+<script>
+// List of consoles supported by EmuJS
+const consoles = ["NES","SNES","GB","GBC","GBA","Genesis"];
+
+// ROMs array with console and image paths
+const roms = [
+  {name:"MARIO", file:"roms/mario.nes", console:"NES", icon:"rom-icons/mario.png"},
+  {name:"ZELDA", file:"roms/zelda.nes", console:"NES", icon:"rom-icons/zelda.png"},
+  {name:"SONIC", file:"roms/sonic.gen", console:"Genesis", icon:"rom-icons/sonic.png"},
+  {name:"METROID", file:"roms/metroid.nes", console:"NES", icon:"rom-icons/metroid.png"},
+  {name:"PACMAN", file:"roms/pacman.nes", console:"NES", icon:"rom-icons/pacman.png"}
+];
+
+// Build tabs dynamically
+const tabHeader = document.getElementById("tab-header");
+const tabsContainer = document.getElementById("tabs-container");
+
+// --- Create ALL tab ---
+const allBtn = document.createElement("button");
+allBtn.textContent = "ALL";
+allBtn.onclick = ()=>openTab("ALL");
+tabHeader.appendChild(allBtn);
+
+const allContent = document.createElement("div");
+allContent.id = "tab-ALL";
+allContent.className = "tab-content";
+roms.forEach(r=>{
+  const a = document.createElement("a");
+  a.href=r.file; a.download=r.file.split("/").pop();
+  a.className="rom";
+  a.innerHTML=`<img src="${r.icon}"><span>${r.name}</span>`;
+  allContent.appendChild(a);
+});
+tabsContainer.appendChild(allContent);
+
+// Create console tabs
+consoles.forEach(consoleName => {
+  const consoleRoms = roms.filter(r => r.console===consoleName);
+  if(consoleRoms.length===0) return; // hide empty consoles
+
+  const btn = document.createElement("button");
+  btn.textContent = consoleName;
+  btn.onclick = ()=>openTab(consoleName);
+  tabHeader.appendChild(btn);
+
+  const content = document.createElement("div");
+  content.id = "tab-" + consoleName;
+  content.className = "tab-content";
+  consoleRoms.forEach(r=>{
+    const a = document.createElement("a");
+    a.href = r.file; a.download = r.file.split("/").pop();
+    a.className="rom";
+    a.innerHTML = `<img src="${r.icon}"><span>${r.name}</span>`;
+    content.appendChild(a);
+  });
+  tabsContainer.appendChild(content);
+});
+
+// Open ALL tab by default
+openTab("ALL");
+
+// Tab switch function
+function openTab(tabName){
+  document.querySelectorAll(".tab-content").forEach(tc=>tc.classList.remove("active"));
+  document.querySelectorAll(".tab-header button").forEach(b=>b.classList.remove("active"));
+  document.getElementById("tab-"+tabName).classList.add("active");
+  Array.from(tabHeader.children).find(b=>b.textContent===tabName).classList.add("active");
+}
+
+// Filter ROMs by search
+function filterRoms(){
+  const query = document.getElementById("search-roms").value.toLowerCase();
+  roms.forEach(r=>{
+    const elAll = document.querySelector(`.tab-content#tab-ALL a[download="${r.file.split("/").pop()}"]`);
+    if(elAll) elAll.style.display = r.name.toLowerCase().includes(query) ? "flex" : "none";
+
+    const elConsole = document.querySelector(`.tab-content#tab-${r.console} a[download="${r.file.split("/").pop()}"]`);
+    if(elConsole) elConsole.style.display = r.name.toLowerCase().includes(query) ? "flex" : "none";
+  });
+}
+
+// Fullscreen emulator
+function toggleFullscreen(){
+  const el = document.getElementById("emulator");
+  if(el.requestFullscreen) el.requestFullscreen();
+  else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  else if(el.msRequestFullscreen) el.msRequestFullscreen();
+}
+</script>
+
+</body>
+</html>

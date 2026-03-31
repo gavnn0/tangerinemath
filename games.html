@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>TangerineMath</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    html,
+    body {
+      height: 100%;
+      background:
+        radial-gradient(circle at 20% 20%, #ffd27a 0%, transparent 40%),
+        radial-gradient(circle at 80% 30%, #ff9f43 0%, transparent 45%),
+        radial-gradient(circle at 30% 80%, #ffb347 0%, transparent 40%),
+        radial-gradient(circle at 70% 70%, #ffa500 0%, transparent 40%),
+        linear-gradient(135deg, #ffb347, #ff7e00);
+      background-attachment: fixed;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      color: white;
+      font-size: 42px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    }
+
+    .search {
+      padding: 12px 18px;
+      width: 300px;
+      border-radius: 30px;
+      border: none;
+      font-size: 14px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+      outline: none;
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      color: white;
+      font-size: 28px;
+      font-weight: 700;
+      text-align: left;
+      width: 95%;
+      max-width: 1100px;
+      margin: 20px 0 10px;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+      border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+      padding-bottom: 6px;
+    }
+
+    .games {
+      width: 95%;
+      max-width: 1100px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 22px;
+      padding-bottom: 30px;
+    }
+
+    .game {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .game-icon {
+      width: 100%;
+      aspect-ratio: 1/1;
+      border-radius: 18px;
+      overflow: hidden;
+      transition: 0.2s;
+    }
+
+    .game-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .game:hover .game-icon {
+      transform: scale(1.08);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+    }
+
+    .game p {
+      margin-top: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+      text-align: center;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .star {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-size: 18px;
+      color: white;
+      opacity: 0.7;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .star.active {
+      color: gold;
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>🍊 TangerineGames++</h1>
+    <input class="search" placeholder="Search games..." onkeyup="searchGames(this)">
+  </header>
+
+  <div id="recent-section">
+    <div class="section-title">🕒 Recently Played</div>
+    <div class="games" id="recent-games"></div>
+  </div>
+
+  <div id="favorites-section">
+    <div class="section-title">⭐ Favorites</div>
+    <div class="games" id="favorite-games"></div>
+  </div>
+
+  <div id="all-section">
+    <div class="section-title">🎮 All Games</div>
+    <div class="games" id="all-games">
+
+      <!-- ALL ORIGINAL GAMES -->
+      <a class="game" href="games/minecraft.html" data-name="minecraft">
+        <div class="star" onclick="toggleFavorite(event,this)">★</div>
+        <div class="game-icon"><img src="icons/minecraft.png"></div>
+        <p>Minecraft</p>
+      </a>
+      <a class="game" href="games/slope.html" data-name="slope">
+        <div class="star" onclick="toggleFavorite(event,this)">★</div>
+        <div class="game-icon"><img src="icons/slope.png"></div>
+        <p>Slope</p>
+      </a>
+      <a class="game" href="games/run3.html" data-name="run3">
+        <div class="star" onclick="toggleFavorite(event,this)">★</div>
+        <div class="game-icon"><img src="icons/run3.png"></div>
+        <p>Run 3</p>
+      </a>
+      <a class="game" href="games/basketrandom.html" data-name="basket random">
+        <div class="star" onclick="toggleFavorite(event,this)">★</div>
+        <div class="game-icon"><img src="icons/basketrandom.png"></div>
+        <p>Basket Random</p>
+      </a>
+      <a class="game" href="games/subwaysurfers.html" data-name="subway surfers">
+        <div class="star" onclick="toggleFavorite(event,this)">★</div>
+        <div class="game-icon"><img src="icons/subwaysurfers.png"></div>
+        <p>Subway Surfers</p>
+      </a>
+      <a class="game" href="games/motox3m.html" data-name="motox3m">
+        <div class="star" onclick="toggleFavorite(event,this)">★</div>
+        <div class="game-icon"><img src="icons/motox3m.png"></div>
+        <p>Moto X3M</p>
+      </a>
+      <a class="game" href="games/retrobowl.html" data-name="retro bowl">
+        <div class="star" onclick="toggleFavorite(event,this)">★</div>
+        <div class="game-icon"><img src="icons/retrobowl.png"></div>
+        <p>Retro Bowl</p>
+      </a>
+      <a class="game" href="games/fnaf.html" data-name="fnaf">
+        <div class="star" onclick="toggleFavorite(event,this)">★</div>
+        <div class="game-icon"><img src="icons/fnaf.png"></div>
+        <p>FNAF</p>
+      </a>
+      <a class="game" href="games/fnaf2.html" data-name="fnaf 2">
+        <div class="star" onclick="toggleFavorite(event,this)">★</div>
+        <div class="game-icon"><img src="icons/fnaf2.png"></div>
+        <p>FNAF 2</p>
+      </a>
+      <a class="game" href="games/fnaf3.html" data-name="fnaf 3">
+        <div class="star" onclick="toggleFavorite(event,this)">★</div>
+        <div class="game-icon"><img src="icons/fnaf3.png"></div>
+        <p>FNAF 3</p>
+      </a>
+      <a class="game" href="games/fnaf4.html" data-name="fnaf 4">
+        <div class="star" onclick="toggleFavorite(event,this)">★</div>
+        <div class="game-icon"><img src="icons/fnaf4.png"></div>
+        <p>FNAF 4</p>
+      </a>
+      <a class="game" href="games/fnaf4h.html" data-name="fnaf 4h">
+        <div class="star" onclick="toggleFavorite(event,this)">★</div>
+        <div class="game-icon"><img src="icons/fnaf4h.png"></div>
+        <p>FNAF 4 Halloween</p>
+      </a>
+      <a class="game" href="games/fnafworld.html" data-name="fnaf world">
+        <div class="star" onclick="toggleFavorite(event,this)">★</div>
+        <div class="game-icon"><img src="icons/fnafworld.png"></div>
+        <p>FNAF World</p>
+      </a>
+      <a class="game" href="games/fnaf6.html" data-name="fnaf 6">
+        <div class="star" onclick="toggleFavorite(event,this)">★</div>
+        <div class="game-icon"><img src="icons/fnaf6.png"></div>
+        <p>FNAF PS</p>
+      </a>
+      <a class="game" href="games/fnaf7.html" data-name="fnaf 7">
+        <div class="star" onclick="toggleFavorite(event,this)">★</div>
+        <div class="game-icon"><img src="icons/fnaf7.png"></div>
+        <p>FNAF UCN</p>
+      </a>
+      <a class="game" href="games/fnac.html" data-name="fnac">
+        <div class="star" onclick="toggleFavorite(event,this)">★</div>
+        <div class="game-icon"><img src="icons/fnac.png"></div>
+        <p>FNAC</p>
+      </a>
+      <a class="game" href="games/fnac2.html" data-name="fnac 2">
+        <div class="star" onclick="toggleFavorite(event,this)">★</div>
+        <div class="game-icon"><img src="icons/fnac2.png"></div>
+        <p>FNAC 2</p>
+      </a>
+      <a class="game" href="games/brotato.html" data-name="brotato">
+        <div class="star" onclick="toggleFavorite(event,this)">★</div>
+        <div class="game-icon"><img src="icons/brotato.png"></div>
+        <p>Brotato</p>
+      </a>
+      <a class="game" href="games/hollowknight.html" data-name="hollow knight">
+        <div class="star" onclick="toggleFavorite(event,this)">★</div>
+        <div class="game-icon"><img src="icons/hollowknight.png"></div>
+        <p>Hollow Knight</p>
+      </a>
+      <a class="game" href="games/omori.html" data-name="omori">
+        <div class="star" onclick="toggleFavorite(event,this)">★</div>
+        <div class="game-icon"><img src="icons/omori.png"></div>
+        <p>OMORI</p>
+      </a>
+      <a class="game" href="games/untitledgoose.html" data-name="untitled goose">
+        <div class="star" onclick="toggleFavorite(event,this)">★</div>
+        <div class="game-icon"><img src="icons/untitledgoose.png"></div>
+        <p>Untitled Goose Game</p>
+      </a>
+
+      <a class="game" href="games/kindergarten.html" data-name="kindergarten">
+        <div class="star" onclick="toggleFavorite(event,this)">★</div>
+        <div class="game-icon"><img src="icons/kindergarten.png"></div>
+        <p>Kindergarten</p>
+      </a>
+
+      <a class="game" href="games/kindergarten2.html" data-name="kindergarten 2">
+        <div class="star" onclick="toggleFavorite(event,this)">★</div>
+        <div class="game-icon"><img src="icons/kindergarten2.png"></div>
+        <p>Kindergarten 2</p>
+      </a>
+
+      <a class="game" href="games/stickwithit.html" data-name="stick with it">
+        <div class="star" onclick="toggleFavorite(event,this)">★</div>
+        <div class="game-icon"><img src="icons/stickwithit.png"></div>
+        <p>Stick With It</p>
+      </a>
+      <a class="game" href="games/fnf.html" data-name="fnf">
+        <div class="star" onclick="toggleFavorite(event,this)">★</div>
+        <div class="game-icon"><img src="icons/fnf.png"></div>
+        <p>Friday Night Funkin'</p>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // SEARCH
+    function searchGames(input) {
+      const filter = input.value.toLowerCase();
+      document.querySelectorAll(".game").forEach(game => {
+        const name = game.dataset.name;
+        game.style.display = name.includes(filter) ? "flex" : "none";
+      });
+    }
+
+    // FAVORITES
+    function toggleFavorite(e, star) {
+      e.preventDefault();
+      e.stopPropagation();
+      const game = star.closest(".game");
+      const name = game.dataset.name;
+
+      let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+      if (favorites.includes(name)) {
+        favorites = favorites.filter(g => g !== name);
+        star.classList.remove("active");
+      } else {
+        favorites.push(name);
+        star.classList.add("active");
+      }
+      localStorage.setItem("favorites", JSON.stringify(favorites));
+      updateSections();
+    }
+
+    // RECENTLY PLAYED
+    document.querySelectorAll(".game").forEach(game => {
+      game.addEventListener("click", e => {
+        if (e.target.classList.contains("star")) return;
+        const name = game.dataset.name;
+        let recent = JSON.parse(localStorage.getItem("recent") || "[]");
+        recent = recent.filter(g => g !== name);
+        recent.unshift(name);
+        recent = recent.slice(0, 10);
+        localStorage.setItem("recent", JSON.stringify(recent));
+        updateSections();
+      });
+    });
+
+    // UPDATE SECTIONS
+    function updateSections() {
+      const allGames = document.querySelectorAll("#all-games .game");
+      const recentContainer = document.getElementById("recent-games");
+      const favoriteContainer = document.getElementById("favorite-games");
+      const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+      const recent = JSON.parse(localStorage.getItem("recent") || "[]");
+      recentContainer.innerHTML = "";
+      favoriteContainer.innerHTML = "";
+      allGames.forEach(game => {
+        const name = game.dataset.name;
+        const star = game.querySelector(".star");
+        if (favorites.includes(name)) star.classList.add("active");
+        else star.classList.remove("active");
+        if (recent.includes(name)) recentContainer.appendChild(game.cloneNode(true));
+        if (favorites.includes(name)) favoriteContainer.appendChild(game.cloneNode(true));
+      });
+    }
+
+    // INITIALIZE
+    window.onload = updateSections;
+  </script>
+
+</body>
+
+</html>
